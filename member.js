@@ -1,12 +1,20 @@
-function skillMember() {
+function skillsMember() {
     var member = document.getElementById("member");
-    var memberSkill = document.getElementById("memberSkill");
-    var memberSkillValue = memberSkill.options[memberSkill.selectedIndex].value;
-    var memberSkillText = memberSkill.options[memberSkill.selectedIndex].text;
-    if (memberSkillValue == "0") {
-        member.style.display = "none";
-    } else {
-        member.style.display = "block";
-        member.innerHTML = memberSkillText;
-    }
+    var skills = document.getElementById("skills");
+    var projects = document.getElementById("projects");
+    var contact = document.getElementById("contact");
+    var memberButton = document.getElementById("memberButton");
+    var skillsButton = document.getElementById("skillsButton");
+    var projectsButton = document.getElementById("projectsButton");
+    var contactButton = document.getElementById("contactButton");
+
+    member.style.display = "block";
+    skills.style.display = "none";
+    projects.style.display = "none";
+    contact.style.display = "none";
+
+    memberButton.style.backgroundColor = "#333";
+    skillsButton.style.backgroundColor = "#111";
+    projectsButton.style.backgroundColor = "#111";
+    contactButton.style.backgroundColor = "#111";
 }
