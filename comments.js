@@ -1,60 +1,61 @@
-// Create a web server
-// 1. Create a web server
-// 2. Create a route for GET /comments
-// 3. Return a list of comments
-// 4. Create a route for GET /comments/:id
-// 5. Return a comment with the given id
-// 6. Create a route for POST /comments
-// 7. Create a new comment
-// 8. Create a route for PUT /comments/:id
-// 9. Update the comment with the given id
-// 10. Create a route for DELETE /comments/:id
-// 11. Delete the comment with the given id
-// 12. Run the server and test all the endpoints
+// Create web server
 
-const Joi = require('joi');
-const express = require('express');
-const app = express();
+// Require statements
+var express = require('express');
+var router = express.Router();
+var db = require('../models');
+var Comment = db.Comment;
 
-app.use(express.json());
-
-const comments = [
-    { id: 1, comment: 'comment1' },
-    { id: 2, comment: 'comment2' },
-    { id: 3, comment: 'comment3' },
-    { id: 4, comment: 'comment4' },
-    { id: 5, comment: 'comment5' },
-    { id: 6, comment: 'comment6' },
-    { id: 7, comment: 'comment7' },
-    { id: 8, comment: 'comment8' },
-    { id: 9, comment: 'comment9' },
-    { id: 10, comment: 'comment10' },
-];
-
-// 2. Create a route for GET /comments
-// 3. Return a list of comments
-app.get('/api/comments', (req, res) => {
-    res.send(comments);
+// GET /comments
+router.get('/', function(req, res) {
+  Comment.findAll().then(function(comments) {
+    res.render('comments/index', { comments: comments });
+  });
 });
 
-// 4. Create a route for GET /comments/:id
-// 5. Return a comment with the given id
-app.get('/api/comments/:id', (req, res) => {
-    const comment = comments.find(c => c.id === parseInt(req.params.id));
-    if (!comment) res.status(404).send(`The comment with the given id ${req.params.id} was not found`);
-    res.send(comment);
+// GET /comments/new
+router.get('/new', function(req, res) {
+  res.render('comments/new');
 });
 
-// 6. Create a route for POST /comments
-// 7. Create a new comment
-app.post('/api/comments', (req, res) => {
-    const { error } = validateComment(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
-
-    const comment = {
-        id: comments.length + 1,
-        comment: req.body.comment
-    };
-    comments.push(comment);
-    res.send(comment);
+// POST /comments
+router.post('/', function(req, res) {
+  Comment.create(req.body).then(function(comment) {
+    res.redirect('/comments/' + comment.id);
+  });
 });
+
+// GET /comments/:id
+router.get('/:id', function(req, res) {
+  Comment.findById(req.params.id).then(function(comment) {
+    res.render('comments/show', { comment: comment });
+  });
+});
+
+// GET /comments/:id/edit
+router.get('/:id/edit', function(req, res) {
+  Comment.findById(req.params.id).then(function(comment) {
+    res.render('comments/edit', { comment: comment });
+  });
+});
+
+// PUT /comments/:id
+router.put('/:id', function(req, res) {
+  Comment.findById(req.params.id).then(function(comment) {
+    comment.updateAttributes(req.body).then(function(comment) {
+      res.redirect('/comments/' + comment.id);
+    });
+  });
+});
+
+// DELETE /comments/:id
+router.delete('/:id', function(req, res) {
+  Comment.findById(req.params.id).then(function(comment) {
+    comment.destroy().then(function() {
+      res.redirect('/comments');
+    });
+  });
+});
+
+// Export statements
+module.exports = router;
