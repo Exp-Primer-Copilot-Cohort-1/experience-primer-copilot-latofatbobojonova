@@ -49,4 +49,12 @@ app.get('/api/comments/:id', (req, res) => {
 // 7. Create a new comment
 app.post('/api/comments', (req, res) => {
     const { error } = validateComment(req.body);
-    if (error) return res.status(
+    if (error) return res.status(400).send(error.details[0].message);
+
+    const comment = {
+        id: comments.length + 1,
+        comment: req.body.comment
+    };
+    comments.push(comment);
+    res.send(comment);
+});
